@@ -1,14 +1,17 @@
 const { spawn } = require("child_process");
+const axios = require("axios");
 
 module.exports = async (commandString = process.env.MJPG) => {
   const [command, ...args] = commandString.split(" ");
-  const process = spawn(command, args);
-  const cleanablePromises = [commandError(process), unableToStartTimeout()];
-  const streamStarted = await Promise.race(
-    cleanablePromises.map((i) => i.promise)
-  );
+  const streamerProcess = spawn(command, args);
+  const cleanablePromises = [
+    commandError(streamerProcess),
+    unableToStartTimeout(),
+    serverReady(),
+  ];
+  await Promise.race(cleanablePromises.map((i) => i.promise));
   cleanablePromises.forEach((i) => i.clean());
-  return streamStarted;
+  return streamerProcess;
 };
 
 function commandError(process) {
@@ -38,5 +41,23 @@ function unableToStartTimeout(duration = 5000) {
   return {
     promise: timeoutPromise,
     clean: () => clearTimeout(timeout),
+  };
+}
+
+function serverReady() {
+  let interval = null;
+  const serverReadyPromise = new Promise((resolve) => {
+    interval = setInterval(() => {
+      axios
+        .get(`${process.env.MJPG_URL}/?action=snapshot`)
+        .then(() => {
+          return resolve();
+        })
+        .catch(() => null);
+    }, 350);
+  });
+  return {
+    promise: serverReadyPromise,
+    clean: () => clearInterval(interval),
   };
 }
