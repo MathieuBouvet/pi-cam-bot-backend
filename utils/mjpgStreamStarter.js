@@ -3,7 +3,12 @@ const { spawn } = require("child_process");
 module.exports = async (commandString = process.env.MJPG) => {
   const [command, ...args] = commandString.split(" ");
   const process = spawn(command, args);
-  return commandError(process).promise;
+  const cleanablePromises = [commandError(process), unableToStartTimeout()];
+  const streamStarted = await Promise.race(
+    cleanablePromises.map((i) => i.promise)
+  );
+  cleanablePromises.forEach((i) => i.clean());
+  return streamStarted;
 };
 
 function commandError(process) {
