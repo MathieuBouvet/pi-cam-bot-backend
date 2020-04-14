@@ -2,20 +2,23 @@ const { spawn } = require("child_process");
 const axios = require("axios");
 const findStreamProcess = require("./processFinder");
 
+let streamProcess = null;
+
 const start = async (commandString = process.env.MJPG) => {
   const streamPid = await findStreamProcess("mjpg_streamer");
   if (streamPid) {
     return { started: true };
   }
   const [command, ...args] = commandString.split(" ");
-  const streamerProcess = spawn(command, args);
+  const child = spawn(command, args);
   const cleanablePromises = [
-    commandError(streamerProcess),
+    commandError(child),
     unableToStartTimeout(),
     serverReady(),
   ];
   await Promise.race(cleanablePromises.map((i) => i.promise));
   cleanablePromises.forEach((i) => i.clean());
+  streamProcess = child;
   return { started: true };
 };
 
