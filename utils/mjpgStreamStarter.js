@@ -32,7 +32,7 @@ function unableToStartTimeout(duration = 5000) {
     timeout = setTimeout(
       reject,
       duration,
-      new Error("Start process tiemout reached")
+      new Error("start process timeout reached")
     );
   });
   return {
