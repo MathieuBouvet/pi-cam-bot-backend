@@ -67,6 +67,32 @@ function serverReady() {
   };
 }
 
+const stop = async () => {
+  const mjpgPid = await findStreamProcess("mjpg_streamer");
+  if (!mjpgPid) {
+    streamProcess = null;
+    return { started: false };
+  }
+  let resolveStop = null;
+  let rejectStop = null;
+  try {
+    const stopResult = await new Promise((resolve, reject) => {
+      resolveStop = () => resolve({ started: false });
+      rejectStop = () =>
+        reject(new Error("Mjpg streamer could not be stopped"));
+      streamProcess.once("exit", resolveStop);
+      streamProcess.once("error", rejectStop);
+      streamProcess.kill();
+    });
+    return stopResult;
+  } finally {
+    streamProcess.removeListener("exit", resolveStop);
+    streamProcess.removeListener("error", rejectStop);
+    streamProcess = null;
+  }
+};
+
 module.exports = {
   start,
+  stop,
 };
