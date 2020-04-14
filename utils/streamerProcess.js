@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 const axios = require("axios");
 const findStreamProcess = require("./processFinder");
 
-module.exports = async (commandString = process.env.MJPG) => {
+const start = async (commandString = process.env.MJPG) => {
   const streamPid = await findStreamProcess("mjpg_streamer");
   if (streamPid) {
     return { started: true };
@@ -66,3 +66,7 @@ function serverReady() {
     clean: () => clearInterval(interval),
   };
 }
+
+module.exports = {
+  start,
+};
