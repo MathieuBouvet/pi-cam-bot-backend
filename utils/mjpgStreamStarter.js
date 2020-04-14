@@ -20,3 +20,18 @@ function commandError(process) {
     clean,
   };
 }
+
+function unableToStartTimeout(duration = 5000) {
+  let timeout = null;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeout = setTimeout(
+      reject,
+      duration,
+      new Error("Start process tiemout reached")
+    );
+  });
+  return {
+    promise: timeoutPromise,
+    clean: () => clearTimeout(timeout),
+  };
+}
