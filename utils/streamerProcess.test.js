@@ -4,13 +4,14 @@ const findProcess = require("./processFinder");
 const childProcess = require("child_process");
 const { execSync } = childProcess;
 
+afterEach(async () => {
+  const process = await findProcess("mjpg_streamer");
+  if (process) {
+    execSync("kill " + process);
+  }
+});
+
 describe("Mjpg stream starter", () => {
-  afterEach(async () => {
-    const process = await findProcess("mjpg_streamer");
-    if (process) {
-      execSync("kill " + process);
-    }
-  });
   it("should resolve to status object once the streamer is started", async () => {
     const streamerProcess = await streamer.start();
     expect(streamerProcess).toEqual({ started: true });
@@ -37,4 +38,16 @@ describe("Mjpg stream starter", () => {
     }
     console.error = theErrorConsole;
   }, 7000);
+});
+
+describe("Mjpg process stopper ", () => {
+  it("should stop the process and resolve with the status", async () => {
+    await streamer.start();
+    const stopper = await streamer.stop();
+    expect(stopper).toEqual({ started: false });
+    expect(await findProcess("mjpg_streamer")).toBeNull();
+  });
+  it("should not try to stop a non started process", async () => {
+    expect(await streamer.stop()).toEqual({ started: false });
+  });
 });
