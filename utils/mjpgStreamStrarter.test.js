@@ -26,4 +26,8 @@ describe("Mjpg stream starter", () => {
     );
     await expect(process).rejects.toThrow();
   });
+  it("should reject with an error when timeout is reached", async () => {
+    const process = startMjpgStream("sleep 6");
+    await expect(process).rejects.toThrow();
+  }, 7000);
 });
