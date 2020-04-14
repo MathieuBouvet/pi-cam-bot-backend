@@ -17,9 +17,9 @@ const start = async (commandString = process.env.MJPG) => {
     serverReady(),
   ];
   try {
-  await Promise.race(cleanablePromises.map((i) => i.promise));
-  streamProcess = child;
-  return { started: true };
+    await Promise.race(cleanablePromises.map((i) => i.promise));
+    streamProcess = child;
+    return { started: true };
   } finally {
     cleanablePromises.forEach((i) => i.clean());
   }
@@ -53,11 +53,14 @@ function unableToStartTimeout(duration = 5000) {
 }
 
 function serverReady() {
+  const source = axios.CancelToken.source();
   let interval = null;
   const serverReadyPromise = new Promise((resolve) => {
     interval = setInterval(() => {
       axios
-        .get(`${process.env.MJPG_URL}/?action=snapshot`)
+        .get(`${process.env.MJPG_URL}/?action=snapshot`, {
+          cancelToken: source.token,
+        })
         .then(() => {
           return resolve();
         })
@@ -66,7 +69,10 @@ function serverReady() {
   });
   return {
     promise: serverReadyPromise,
-    clean: () => clearInterval(interval),
+    clean: () => {
+      source.cancel();
+      clearInterval(interval);
+    },
   };
 }
 
