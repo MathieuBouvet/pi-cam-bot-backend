@@ -18,7 +18,7 @@ describe("Mjpg stream starter", () => {
   });
   it("should resolve to a child process once the streamer is started", async () => {
     const streamerProcess = await startMjpgStream();
-    expect(streamerProcess).toBe(expect.any(ChildProcess));
+    expect(streamerProcess instanceof ChildProcess).toBe(true);
     expect(await findProcess("mjpg_streamer")).toBe(streamerProcess.pid);
   });
   it("should reject with an error when unable to start", async () => {
