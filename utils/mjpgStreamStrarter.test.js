@@ -2,7 +2,7 @@ require("dotenv").config();
 const startMjpgStream = require("./mjpgStreamStarter");
 const findProcess = require("./processFinder");
 const childProcess = require("child_process");
-const { ChildProcess, exec, execSync } = childProcess;
+const { exec, execSync } = childProcess;
 
 describe("Mjpg stream starter", () => {
   afterEach(async () => {
@@ -16,10 +16,10 @@ describe("Mjpg stream starter", () => {
       });
     });
   });
-  it("should resolve to a child process once the streamer is started", async () => {
+  it("should resolve to status object once the streamer is started", async () => {
     const streamerProcess = await startMjpgStream();
-    expect(streamerProcess instanceof ChildProcess).toBe(true);
-    expect(await findProcess("mjpg_streamer")).toBe(streamerProcess.pid);
+    expect(streamerProcess).toEqual({ started: true });
+    expect(await findProcess("mjpg_streamer")).not.toBeNull();
   });
   it("should not try to start a new process if already started", async () => {
     await startMjpgStream();
