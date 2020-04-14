@@ -2,7 +2,7 @@ require("dotenv").config();
 const startMjpgStream = require("./mjpgStreamStarter");
 const findProcess = require("./processFinder");
 const childProcess = require("child_process");
-const { ChildProcess, exec } = childProcess;
+const { ChildProcess, exec, execSync } = childProcess;
 
 describe("Mjpg stream starter", () => {
   afterEach(async () => {
@@ -36,6 +36,10 @@ describe("Mjpg stream starter", () => {
     console.error = jest.fn();
     const process = startMjpgStream("sleep 6");
     await expect(process).rejects.toThrow();
+    const sleep = await findProcess("sleep");
+    if (sleep) {
+      execSync("kill " + sleep);
+    }
     console.error = theErrorConsole;
   }, 7000);
 });
