@@ -28,7 +28,10 @@ describe("Mjpg stream starter", () => {
     await expect(process).rejects.toThrow();
   });
   it("should reject with an error when timeout is reached", async () => {
+    const theErrorConsole = console.error;
+    console.error = jest.fn();
     const process = startMjpgStream("sleep 6");
     await expect(process).rejects.toThrow();
+    console.error = theErrorConsole;
   }, 7000);
 });
