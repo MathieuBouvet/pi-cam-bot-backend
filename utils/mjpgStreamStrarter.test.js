@@ -1,3 +1,4 @@
+require("dotenv").config();
 const startMjpgStream = require("./mjpgStreamStarter");
 const findProcess = require("./processFinder");
 const childProcess = require("child_process");
