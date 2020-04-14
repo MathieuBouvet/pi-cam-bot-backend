@@ -16,10 +16,13 @@ const start = async (commandString = process.env.MJPG) => {
     unableToStartTimeout(),
     serverReady(),
   ];
+  try {
   await Promise.race(cleanablePromises.map((i) => i.promise));
-  cleanablePromises.forEach((i) => i.clean());
   streamProcess = child;
   return { started: true };
+  } finally {
+    cleanablePromises.forEach((i) => i.clean());
+  }
 };
 
 function commandError(process) {
