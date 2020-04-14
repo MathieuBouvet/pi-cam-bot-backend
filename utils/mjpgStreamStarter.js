@@ -1,9 +1,16 @@
 const { spawn } = require("child_process");
 const axios = require("axios");
+const findStreamProcess = require("./processFinder");
+
+let streamerProcess = null;
 
 module.exports = async (commandString = process.env.MJPG) => {
+  const streamPid = await findStreamProcess("mjpg_streamer");
+  if (streamPid && streamerProcess) {
+    return streamerProcess;
+  }
   const [command, ...args] = commandString.split(" ");
-  const streamerProcess = spawn(command, args);
+  streamerProcess = spawn(command, args);
   const cleanablePromises = [
     commandError(streamerProcess),
     unableToStartTimeout(),
