@@ -2,19 +2,14 @@ require("dotenv").config();
 const streamer = require("./streamerProcess");
 const findProcess = require("./processFinder");
 const childProcess = require("child_process");
-const { exec, execSync } = childProcess;
+const { execSync } = childProcess;
 
 describe("Mjpg stream starter", () => {
   afterEach(async () => {
     const process = await findProcess("mjpg_streamer");
-    return new Promise((resolve, reject) => {
-      if (!process) {
-        return resolve();
-      }
-      exec("kill " + process, (err) => {
-        return err ? reject(err) : resolve();
-      });
-    });
+    if (process) {
+      execSync("kill " + process);
+    }
   });
   it("should resolve to status object once the streamer is started", async () => {
     const streamerProcess = await streamer.start();
