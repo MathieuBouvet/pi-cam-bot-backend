@@ -25,12 +25,9 @@ function commandError(process) {
     exitHandler = () => reject(new Error("Unable to start the process"));
     process.on("exit", exitHandler);
   });
-  const clean = () => {
-    process.removeListener("exit", exitHandler);
-  };
   return {
     promise: commandErrorPromise,
-    clean,
+    clean: () => process.removeListener("exit", exitHandler),
   };
 }
 
