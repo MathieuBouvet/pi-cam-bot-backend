@@ -43,9 +43,7 @@ describe("mjpg stream starter", () => {
   });
   it("should reject with an error if starting timeout is reached", async () => {
     jest.useFakeTimers();
-    findProcess.mockReturnValueOnce(null);
-    const streamerStart = streamer.start();
-    Promise.resolve().then(() => jest.runOnlyPendingTimers());
-    await expect(streamerStart).rejects.toThrow();
+    process.nextTick(jest.runOnlyPendingTimers);
+    await expect(streamer.start()).rejects.toThrow();
   });
 });
