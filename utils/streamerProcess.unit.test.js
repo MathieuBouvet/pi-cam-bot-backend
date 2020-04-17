@@ -13,6 +13,7 @@ let mockedSpawnProcess = null;
 childProcess.spawn.mockImplementation(() => {
   mockedSpawnProcess = new EventEmitter();
   mockedSpawnProcess.pid = 42;
+  mockedSpawnProcess.kill = jest.fn();
   return mockedSpawnProcess;
 });
 
@@ -26,7 +27,9 @@ findProcess.mockResolvedValue(null);
 
 beforeEach(() => {
   childProcess.spawn.mockClear();
+  mockedSpawnProcess && mockedSpawnProcess.kill.mockClear();
 });
+
 describe("mjpg stream starter", () => {
   it("should resolve to the started status", async () => {
     axios.get.mockResolvedValueOnce(true);
@@ -45,5 +48,29 @@ describe("mjpg stream starter", () => {
     jest.useFakeTimers();
     process.nextTick(jest.runOnlyPendingTimers);
     await expect(streamer.start()).rejects.toThrow();
+  });
+});
+describe("mjpg stream stopper", () => {
+  it("should resolve to the stopped status", async () => {
+    jest.useRealTimers();
+    axios.get.mockResolvedValueOnce(true);
+    await streamer.start();
+    findProcess.mockResolvedValueOnce(42);
+    setTimeout(() => mockedSpawnProcess.emit("exit"));
+    await expect(streamer.stop()).resolves.toEqual({ started: false });
+    expect(mockedSpawnProcess.kill).toHaveBeenCalledTimes(1);
+  });
+  it("should not try to stopped a non started process", async () => {
+    findProcess.mockResolvedValueOnce(null);
+    await expect(streamer.stop()).resolves.toEqual({ started: false });
+    expect(mockedSpawnProcess.kill).not.toHaveBeenCalled();
+  });
+  it("should reject with an error if impossible to stop", async () => {
+    jest.useRealTimers();
+    axios.get.mockResolvedValueOnce(true);
+    await streamer.start();
+    findProcess.mockResolvedValueOnce(42);
+    setTimeout(() => mockedSpawnProcess.emit("error"));
+    await expect(streamer.stop()).rejects.toThrow();
   });
 });
