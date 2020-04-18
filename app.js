@@ -1,4 +1,7 @@
+require("dotenv").config();
 const express = require("express");
+const camera = require("./services/camera.service");
+const validator = require("./services/validator.service");
 
 const app = express();
 
@@ -10,6 +13,13 @@ app.use((req, res, next) => {
   res.setHeader("access-control-allow-headers", "content-type");
   res.setHeader("access-control-max-age", "86400");
   next();
+});
+
+app.put("/robot/camera", async (req, res) => {
+  const wantedCameraStatus = validator.camera(req.body);
+
+  const cameraStatus = await camera.update(wantedCameraStatus);
+  res.status(200).send(cameraStatus);
 });
 
 module.exports = app;
