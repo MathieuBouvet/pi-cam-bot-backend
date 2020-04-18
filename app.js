@@ -12,8 +12,4 @@ app.use((req, res, next) => {
   next();
 });
 
-app.put("/hello/camera", (req, res) => {
-  res.status(200).json({ message: "Hello World" });
-});
-
 module.exports = app;
