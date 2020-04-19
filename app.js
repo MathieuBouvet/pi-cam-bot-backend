@@ -16,11 +16,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.put("/robot/camera", async (req, res) => {
-  const wantedCameraStatus = validator.camera(req.body);
-
-  const cameraStatus = await camera.update(wantedCameraStatus);
-  res.status(200).send(cameraStatus);
+app.put("/robot/camera", async (req, res, next) => {
+  try {
+    const wantedCameraStatus = validator.camera(req.body);
+    const cameraStatus = await camera.update(wantedCameraStatus);
+    res.status(200).send(cameraStatus);
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.use(errorHandler);
