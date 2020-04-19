@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const camera = require("./services/camera.service");
 const validator = require("./services/validator.service");
+const errorHandler = require("./utils/errorHandler");
 
 const app = express();
 
@@ -21,5 +22,7 @@ app.put("/robot/camera", async (req, res) => {
   const cameraStatus = await camera.update(wantedCameraStatus);
   res.status(200).send(cameraStatus);
 });
+
+app.use(errorHandler);
 
 module.exports = app;
