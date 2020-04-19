@@ -91,7 +91,7 @@ const stop = async () => {
         reject(new Error("Mjpg streamer could not be stopped"));
       streamProcess.once("exit", resolveStop);
       streamProcess.once("error", rejectStop);
-      streamProcess.kill();
+      streamProcess.kill("SIGINT");
     });
     return stopResult;
   } finally {
