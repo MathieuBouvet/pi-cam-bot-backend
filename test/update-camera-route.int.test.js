@@ -15,3 +15,21 @@ it("should stop the streamer on {started: false}", async () => {
   expect(result.body).toEqual({ started: false });
   await expect(findProcess("mjpg_streamer")).resolves.toBeNull();
 });
+it.each([
+  [null],
+  [false],
+  [{ invalid: "42" }],
+  [{ started: "42" }],
+  [{ started: true, invalid: true }],
+])(
+  "should respond with http 400 when input is invalid (tested: %s)",
+  async (input) => {
+    const result = await request.put("/robot/camera").send(input);
+    expect(result.status).toBe(400);
+    expect(result.body).toEqual({
+      code: 400,
+      reason: "Bad Request",
+      message: "invalid camera input",
+    });
+  }
+);
