@@ -26,6 +26,10 @@ app.put("/robot/camera", async (req, res, next) => {
   }
 });
 
+app.put("/robot", (req, res) => {
+  res.status(200).json({ ok: true });
+});
+
 app.use(errorHandler);
 
 module.exports = app;
