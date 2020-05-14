@@ -1,7 +1,13 @@
-const errorHandler = require("./errorHandler");
-const { Http400 } = require("./errors");
+import { http400Handler } from "./errorHandler";
+import { Http400 } from "./errors";
+import { Response } from "express";
 
-const res = {
+type MockedRes = {
+  status: jest.Mock;
+  json: jest.Mock;
+} & Partial<Omit<Response, "status" | "json">>;
+
+const res: MockedRes = {
   status: jest.fn(() => res),
   json: jest.fn(() => res),
 };
@@ -14,7 +20,7 @@ afterEach(() => {
 });
 it("should handle http 400 errors", () => {
   const http400Instance = new Http400("test http 400 error");
-  errorHandler(http400Instance, null, res, next);
+  http400Handler(http400Instance, null, res as Response, next);
   expect(res.status).toHaveBeenCalledWith(400);
   expect(res.json.mock.calls[0][0]).toEqual({
     code: 400,
@@ -26,7 +32,7 @@ it("should handle http 400 errors", () => {
 
 it("should pass unhandled errors to default express error handler", () => {
   const defaultError = new Error("default error");
-  errorHandler(defaultError, null, res, next);
+  http400Handler(defaultError, null, res as Response, next);
   expect(res.status).not.toHaveBeenCalled();
   expect(res.json).not.toHaveBeenCalled();
   expect(next).toHaveBeenCalledWith(defaultError);
