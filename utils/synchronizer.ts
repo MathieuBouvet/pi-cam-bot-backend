@@ -1,7 +1,7 @@
-interface Synchronizer<T> {
-  (action: () => Promise<T>): () => Promise<T>;
+interface Synchronizer {
+  <T>(action: () => Promise<T>): () => Promise<T>;
 }
-function synchronizer<T>(): Synchronizer<T> {
+function synchronizer(): Synchronizer {
   let idle = true;
   const awaiting: (() => void)[] = [];
 
