@@ -1,7 +1,10 @@
-const { exec } = require("child_process");
-module.exports = (name) => {
+import { exec } from "child_process";
+
+const processFinder: (name: string) => Promise<number | null> = (
+  name: string
+): Promise<number | null> => {
   return new Promise((resolve, reject) => {
-    exec(`ps ax | grep -w ${name} | grep -v grep`, (err, stdout) => {
+    exec(`ps ax | grep -w ${name} | grep -v grep`, {}, (err, stdout) => {
       if (err) {
         return err.code === 1 ? resolve(null) : reject(err);
       }
@@ -11,3 +14,5 @@ module.exports = (name) => {
     });
   });
 };
+
+export default processFinder;
