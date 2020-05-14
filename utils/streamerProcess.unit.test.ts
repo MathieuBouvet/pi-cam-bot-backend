@@ -1,42 +1,57 @@
-require("dotenv").config();
-const streamer = require("./streamerProcess");
-const { EventEmitter } = require("events");
-const findProcess = require("./processFinder");
-const childProcess = require("child_process");
-const axios = require("axios");
+import "dotenv/config";
+import { mocked } from "ts-jest/utils";
+import streamer from "./streamerProcess";
+import { EventEmitter } from "events";
+import findProcess from "./processFinder";
+import childProcess from "child_process";
+import axios from "axios";
+
+interface MockedProcess extends EventEmitter {
+  pid?: number;
+  kill?: jest.Mock;
+}
 
 jest.mock("child_process");
 jest.mock("axios");
 jest.mock("./processFinder");
 
-let mockedSpawnProcess = null;
-childProcess.spawn.mockImplementation(() => {
+const mockedChildProcess = mocked(childProcess, true);
+const mockedAxios = mocked(axios, true);
+const mockFindProcess = mocked(findProcess, true);
+
+let mockedSpawnProcess: MockedProcess;
+mockedChildProcess.spawn.mockImplementation(() => {
   mockedSpawnProcess = new EventEmitter();
   mockedSpawnProcess.pid = 42;
   mockedSpawnProcess.kill = jest.fn();
-  return mockedSpawnProcess;
+  return (mockedSpawnProcess as unknown) as childProcess.ChildProcess;
 });
 
-axios.get.mockRejectedValue("network error");
-axios.CancelToken.source.mockReturnValue({
-  token: "token",
+mockedAxios.get.mockRejectedValue("network error");
+mockedAxios.CancelToken.source.mockReturnValue({
+  token: {
+    promise: new Promise(() => null),
+    throwIfRequested: () => null,
+  },
   cancel: jest.fn(),
 });
 
-findProcess.mockResolvedValue(null);
+mockFindProcess.mockResolvedValue(null);
 
 beforeEach(() => {
-  childProcess.spawn.mockClear();
-  mockedSpawnProcess && mockedSpawnProcess.kill.mockClear();
+  mockedChildProcess.spawn.mockClear();
+  mockedSpawnProcess &&
+    mockedSpawnProcess.kill &&
+    mockedSpawnProcess.kill.mockClear();
 });
 
 describe("mjpg stream starter", () => {
   it("should resolve to the started status", async () => {
-    axios.get.mockResolvedValueOnce(true);
+    mockedAxios.get.mockResolvedValueOnce(true);
     await expect(streamer.start()).resolves.toEqual({ started: true });
   });
   it("should not spawn a new process if already started", async () => {
-    findProcess.mockResolvedValueOnce(42);
+    mockFindProcess.mockResolvedValueOnce(42);
     await streamer.start();
     expect(childProcess.spawn).not.toHaveBeenCalled();
   });
@@ -53,23 +68,23 @@ describe("mjpg stream starter", () => {
 describe("mjpg stream stopper", () => {
   it("should resolve to the stopped status", async () => {
     jest.useRealTimers();
-    axios.get.mockResolvedValueOnce(true);
+    mockedAxios.get.mockResolvedValueOnce(true);
     await streamer.start();
-    findProcess.mockResolvedValueOnce(42);
+    mockFindProcess.mockResolvedValueOnce(42);
     setTimeout(() => mockedSpawnProcess.emit("exit"));
     await expect(streamer.stop()).resolves.toEqual({ started: false });
     expect(mockedSpawnProcess.kill).toHaveBeenCalledTimes(1);
   });
   it("should not try to stopped a non started process", async () => {
-    findProcess.mockResolvedValueOnce(null);
+    mockFindProcess.mockResolvedValueOnce(null);
     await expect(streamer.stop()).resolves.toEqual({ started: false });
     expect(mockedSpawnProcess.kill).not.toHaveBeenCalled();
   });
   it("should reject with an error if impossible to stop", async () => {
     jest.useRealTimers();
-    axios.get.mockResolvedValueOnce(true);
+    mockedAxios.get.mockResolvedValueOnce(true);
     await streamer.start();
-    findProcess.mockResolvedValueOnce(42);
+    mockFindProcess.mockResolvedValueOnce(42);
     setTimeout(() => mockedSpawnProcess.emit("error"));
     await expect(streamer.stop()).rejects.toThrow();
   });
