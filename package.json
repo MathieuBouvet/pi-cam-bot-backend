@@ -4,7 +4,8 @@
   "description": "The backend for controlling the bot",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "tsc && nodemon built/server.js",
+    "build": "tsc",
     "unit-test": "jest unit",
     "integration-test": "jest int",
     "test": "jest"
