@@ -1,5 +1,5 @@
-const validator = require("./validator.service");
-const { Http400 } = require("../utils/errors");
+import validator from "./validator.service";
+import { Http400 } from "../utils/errors";
 
 describe("camera validator", () => {
   const cameraValidator = validator.camera;
