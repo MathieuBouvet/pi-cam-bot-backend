@@ -1,23 +1,26 @@
-function synchronizer() {
+interface Synchronizer<T> {
+  (action: () => Promise<T>): () => Promise<T>;
+}
+function synchronizer<T>(): Synchronizer<T> {
   let idle = true;
-  const awaiting = [];
+  const awaiting: (() => void)[] = [];
 
   const beeingIdle = async () => {
     if (idle) {
       idle = false;
       return Promise.resolve();
     }
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       awaiting.push(resolve);
     });
   };
 
   const taskFinished = () => {
-    if (awaiting.length === 0) {
-      idle = true;
-    } else {
-      const resolveNextAwaiting = awaiting.shift();
+    const resolveNextAwaiting = awaiting.shift();
+    if (resolveNextAwaiting != null) {
       resolveNextAwaiting();
+    } else {
+      idle = true;
     }
   };
 
@@ -25,8 +28,7 @@ function synchronizer() {
     return async () => {
       await beeingIdle();
       try {
-        const result = await action();
-        return result;
+        return await action();
       } finally {
         taskFinished();
       }
@@ -34,4 +36,4 @@ function synchronizer() {
   };
 }
 
-module.exports = synchronizer;
+export default synchronizer;
