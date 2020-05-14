@@ -1,8 +1,8 @@
-require("dotenv").config();
-const express = require("express");
-const camera = require("./services/camera.service");
-const validator = require("./services/validator.service");
-const errorHandler = require("./utils/errorHandler");
+import "dotenv/config";
+import express from "express";
+import camera from "./services/camera.service";
+import validator from "./services/validator.service";
+import { http400Handler } from "./utils/errorHandler";
 
 const app = express();
 
@@ -30,6 +30,6 @@ app.put("/robot", (req, res) => {
   res.status(200).json({ ok: true });
 });
 
-app.use(errorHandler);
+app.use(http400Handler);
 
-module.exports = app;
+export default app;
