@@ -2,7 +2,7 @@ import { spawn, ChildProcess } from "child_process";
 import axios from "axios";
 import findStreamProcess from "./processFinder";
 
-interface CameraStatus {
+export interface CameraStatus {
   started: boolean;
 }
 interface Cleanable {
