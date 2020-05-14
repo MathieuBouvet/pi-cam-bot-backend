@@ -1,5 +1,13 @@
-const synchronizer = require("./synchronizer");
-const withSynchronization = synchronizer();
+import synchronizer from "./synchronizer";
+
+interface ControlResult {
+  controlValue: number | string;
+  resolvedAt: number;
+}
+interface ControlPromiseFactory {
+  (timing?: number): () => Promise<ControlResult>;
+}
+const withSynchronization = synchronizer<ControlResult>();
 
 describe("the synchronizer", () => {
   it("should return a function", () => {
@@ -7,7 +15,7 @@ describe("the synchronizer", () => {
   });
 });
 
-const resolvedPromiseFactory = (timing = 150) => () => {
+const resolvedPromiseFactory: ControlPromiseFactory = (timing = 150) => () => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ controlValue: 42, resolvedAt: Date.now() });
@@ -15,7 +23,7 @@ const resolvedPromiseFactory = (timing = 150) => () => {
   });
 };
 
-const rejectedPromiseFactory = (timing = 150) => () => {
+const rejectedPromiseFactory: ControlPromiseFactory = (timing = 150) => () => {
   return new Promise((_, reject) => {
     setTimeout(() => {
       reject({ controlValue: "rejected", rejectedAt: Date.now() });
