@@ -1,6 +1,6 @@
-const supertest = require("supertest");
-const app = require("../app");
-const findProcess = require("../utils/processFinder");
+import supertest from "supertest";
+import app from "../app";
+import findProcess from "../utils/processFinder";
 
 const request = supertest(app);
 
@@ -16,8 +16,8 @@ it("should stop the streamer on {started: false}", async () => {
   await expect(findProcess("mjpg_streamer")).resolves.toBeNull();
 });
 it.each([
-  [null],
-  [false],
+  [""],
+  ["false"],
   [{ invalid: "42" }],
   [{ started: "42" }],
   [{ started: true, invalid: true }],
