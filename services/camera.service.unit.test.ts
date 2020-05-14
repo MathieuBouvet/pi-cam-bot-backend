@@ -1,13 +1,16 @@
-const camera = require("./camera.service");
-const streamerProcess = require("../utils/streamerProcess");
+import camera from "./camera.service";
+import streamerProcess from "../utils/streamerProcess";
+import { mocked } from "ts-jest/utils";
 
 jest.mock("../utils/streamerProcess");
-jest.mock("../utils/synchronizer", () => () => (callback) => async () =>
+jest.mock("../utils/synchronizer", () => () => (callback: any) => async () =>
   callback()
 );
 
-streamerProcess.start.mockResolvedValue({ started: true });
-streamerProcess.stop.mockResolvedValue({ started: false });
+const mockedStreramerProcesss = mocked(streamerProcess, true);
+
+mockedStreramerProcesss.start.mockResolvedValue({ started: true });
+mockedStreramerProcesss.stop.mockResolvedValue({ started: false });
 
 it("should start the camera", async () => {
   const result = await camera.update({ started: true });
