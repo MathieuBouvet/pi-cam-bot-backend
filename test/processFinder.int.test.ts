@@ -1,5 +1,5 @@
-const { spawn } = require("child_process");
-const findProcess = require("../utils/processFinder");
+import { spawn } from "child_process";
+import findProcess from "../utils/processFinder";
 
 it("should resolve to the first pid found for the process name given", async () => {
   const top = spawn("sleep", ["60"]);
