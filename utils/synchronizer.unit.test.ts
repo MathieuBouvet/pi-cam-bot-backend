@@ -7,7 +7,7 @@ interface ControlResult {
 interface ControlPromiseFactory {
   (timing?: number): () => Promise<ControlResult>;
 }
-const withSynchronization = synchronizer<ControlResult>();
+const withSynchronization = synchronizer();
 
 describe("the synchronizer", () => {
   it("should return a function", () => {
