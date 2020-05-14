@@ -1,4 +1,4 @@
-const { Http400 } = require("./errors");
+import { Http400 } from "./errors";
 
 describe("Http400 error", () => {
   const http400Instance = new Http400("test http 400");

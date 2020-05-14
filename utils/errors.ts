@@ -1,10 +1,8 @@
 class Http400 extends Error {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = "400 - Bad Request";
   }
 }
 
-module.exports = {
-  Http400,
-};
+export { Http400 };
