@@ -1,10 +1,22 @@
-const { spawn } = require("child_process");
-const axios = require("axios");
-const findStreamProcess = require("./processFinder");
+import { spawn, ChildProcess } from "child_process";
+import axios from "axios";
+import findStreamProcess from "./processFinder";
 
-let streamProcess = null;
+interface CameraStatus {
+  started: boolean;
+}
+interface Cleanable {
+  clean: () => void;
+}
+interface WrappedPromise<T> {
+  promise: Promise<T>;
+}
+type CleanablePromise<T> = Cleanable & WrappedPromise<T>;
 
-const start = async (commandString = process.env.MJPG) => {
+let streamProcess: ChildProcess | null = null;
+
+const start = async (): Promise<CameraStatus> => {
+  const commandString = process.env.MJPG || "";
   const streamPid = await findStreamProcess("mjpg_streamer");
   if (streamPid) {
     return { started: true };
@@ -25,9 +37,9 @@ const start = async (commandString = process.env.MJPG) => {
   }
 };
 
-function commandError(process) {
-  let exitHandler = null;
-  const commandErrorPromise = new Promise((resolve, reject) => {
+function commandError(process: ChildProcess): CleanablePromise<null> {
+  let exitHandler: () => void = () => null;
+  const commandErrorPromise: Promise<null> = new Promise((resolve, reject) => {
     exitHandler = () => reject(new Error("Unable to start the process"));
     process.on("exit", exitHandler);
   });
@@ -37,9 +49,9 @@ function commandError(process) {
   };
 }
 
-function unableToStartTimeout(duration = 5000) {
-  let timeout = null;
-  const timeoutPromise = new Promise((_, reject) => {
+function unableToStartTimeout(duration = 5000): CleanablePromise<null> {
+  let timeout: NodeJS.Timeout;
+  const timeoutPromise = new Promise<null>((_, reject) => {
     timeout = setTimeout(
       reject,
       duration,
@@ -52,10 +64,10 @@ function unableToStartTimeout(duration = 5000) {
   };
 }
 
-function serverReady() {
+function serverReady(): CleanablePromise<null> {
   const source = axios.CancelToken.source();
-  let interval = null;
-  const serverReadyPromise = new Promise((resolve) => {
+  let interval: NodeJS.Timeout;
+  const serverReadyPromise = new Promise<null>((resolve) => {
     interval = setInterval(() => {
       axios
         .get(`${process.env.MJPG_URL}/?action=snapshot`, {
@@ -76,32 +88,36 @@ function serverReady() {
   };
 }
 
-const stop = async () => {
+const stop = async (): Promise<CameraStatus> => {
   const mjpgPid = await findStreamProcess("mjpg_streamer");
   if (!mjpgPid) {
     streamProcess = null;
     return { started: false };
   }
-  let resolveStop = null;
-  let rejectStop = null;
+  let resolveStop: () => void = () => null;
+  let rejectStop: () => void = () => null;
   try {
-    const stopResult = await new Promise((resolve, reject) => {
+    const stopResult = await new Promise<CameraStatus>((resolve, reject) => {
       resolveStop = () => resolve({ started: false });
       rejectStop = () =>
         reject(new Error("Mjpg streamer could not be stopped"));
-      streamProcess.once("exit", resolveStop);
-      streamProcess.once("error", rejectStop);
-      streamProcess.kill("SIGINT");
+      if (streamProcess) {
+        streamProcess.once("exit", resolveStop);
+        streamProcess.once("error", rejectStop);
+        streamProcess.kill("SIGINT");
+      }
     });
     return stopResult;
   } finally {
-    streamProcess.removeListener("exit", resolveStop);
-    streamProcess.removeListener("error", rejectStop);
-    streamProcess = null;
+    if (streamProcess) {
+      streamProcess.removeListener("exit", resolveStop);
+      streamProcess.removeListener("error", rejectStop);
+      streamProcess = null;
+    }
   }
 };
 
-module.exports = {
+export default {
   start,
   stop,
 };
