@@ -5,13 +5,13 @@ import findStreamProcess from "./processFinder";
 export interface CameraStatus {
   started: boolean;
 }
-interface Cleanable {
+interface HasClean {
   clean: () => void;
 }
-interface WrappedPromise<T> {
+interface HasPromise<T> {
   promise: Promise<T>;
 }
-type CleanablePromise<T> = Cleanable & WrappedPromise<T>;
+type HasCleanAndPromise<T> = HasClean & HasPromise<T>;
 
 let streamProcess: ChildProcess | null = null;
 
@@ -37,9 +37,9 @@ const start = async (): Promise<CameraStatus> => {
   }
 };
 
-function commandError(process: ChildProcess): CleanablePromise<null> {
+function commandError(process: ChildProcess): HasCleanAndPromise<void> {
   let exitHandler: () => void = () => null;
-  const commandErrorPromise: Promise<null> = new Promise((resolve, reject) => {
+  const commandErrorPromise: Promise<void> = new Promise((resolve, reject) => {
     exitHandler = () => reject(new Error("Unable to start the process"));
     process.on("exit", exitHandler);
   });
@@ -49,9 +49,9 @@ function commandError(process: ChildProcess): CleanablePromise<null> {
   };
 }
 
-function unableToStartTimeout(duration = 5000): CleanablePromise<null> {
+function unableToStartTimeout(duration = 5000): HasCleanAndPromise<void> {
   let timeout: NodeJS.Timeout;
-  const timeoutPromise = new Promise<null>((_, reject) => {
+  const timeoutPromise = new Promise<void>((_, reject) => {
     timeout = setTimeout(
       reject,
       duration,
@@ -64,10 +64,10 @@ function unableToStartTimeout(duration = 5000): CleanablePromise<null> {
   };
 }
 
-function serverReady(): CleanablePromise<null> {
+function serverReady(): HasCleanAndPromise<void> {
   const source = axios.CancelToken.source();
   let interval: NodeJS.Timeout;
-  const serverReadyPromise = new Promise<null>((resolve) => {
+  const serverReadyPromise = new Promise<void>((resolve) => {
     interval = setInterval(() => {
       axios
         .get(`${process.env.MJPG_URL}/?action=snapshot`, {
