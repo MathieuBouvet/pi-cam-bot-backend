@@ -1,5 +1,5 @@
 import { Gpio } from "onoff";
-import { gpiosToActivate, RobotWheels, Directions } from "./wheels";
+import { gpiosToActivate, RobotWheels, Movement } from "./wheels";
 
 const testGpios = [
   new Gpio(11, "out"),
@@ -76,8 +76,8 @@ it.each([
   ],
 ])(
   "should return the list of gpio to activate to %s",
-  (description: string, directions: Directions, expected: Gpio[]) => {
-    expect(gpiosToActivate(directions, testRobotWheels)).toEqual(expected);
+  (description: string, movement: Movement, expected: Gpio[]) => {
+    expect(gpiosToActivate(movement, testRobotWheels)).toEqual(expected);
   }
 );
 
@@ -183,7 +183,7 @@ it.each([
   ],
 ])(
   "should return empty list for %s",
-  (description: string, directions: Directions) => {
-    expect(gpiosToActivate(directions, testRobotWheels)).toEqual([]);
+  (description: string, movement: Movement) => {
+    expect(gpiosToActivate(movement, testRobotWheels)).toEqual([]);
   }
 );

@@ -5,7 +5,7 @@ export interface RobotWheels {
   left: wheel;
   right: wheel;
 }
-export interface Directions {
+export interface Movement {
   up: boolean;
   down: boolean;
   left: boolean;
@@ -18,27 +18,27 @@ type WheelsAction = {
   [key in keyof RobotWheels]: actionOnWheel;
 };
 
-function createDirections(...directions: (keyof Directions)[]): Directions {
-  const dir: Directions = {
+function createMovement(...directions: (keyof Movement)[]): Movement {
+  const movement: Movement = {
     up: false,
     down: false,
     left: false,
     right: false,
   };
-  for (let name of directions) {
-    dir[name] = true;
+  for (let direction of directions) {
+    movement[direction] = true;
   }
-  return dir;
+  return movement;
 }
 
-const moveForward = createDirections("up");
-const moveBackward = createDirections("down");
-const moveLeft = createDirections("up", "left");
-const moveRight = createDirections("up", "right");
-const rotateLeft = createDirections("left");
-const rotateRight = createDirections("right");
+const moveForward = createMovement("up");
+const moveBackward = createMovement("down");
+const moveLeft = createMovement("up", "left");
+const moveRight = createMovement("up", "right");
+const rotateLeft = createMovement("left");
+const rotateRight = createMovement("right");
 
-function isSame(d1: Directions, d2: Directions): boolean {
+function isSame(d1: Movement, d2: Movement): boolean {
   return (
     d1.up === d2.up &&
     d1.down === d2.down &&
@@ -59,32 +59,32 @@ const nothing: actionOnWheel = (wheel) => [];
 const forward: actionOnWheel = (wheel) => [wheel[0]];
 const backward: actionOnWheel = (wheel) => [wheel[1]];
 
-function getWheelsAction(directions: Directions): WheelsAction {
-  if (isSame(directions, moveForward)) {
+function getWheelsAction(movement: Movement): WheelsAction {
+  if (isSame(movement, moveForward)) {
     return { left: forward, right: forward };
   }
-  if (isSame(directions, moveBackward)) {
+  if (isSame(movement, moveBackward)) {
     return { left: backward, right: backward };
   }
-  if (isSame(directions, moveLeft)) {
+  if (isSame(movement, moveLeft)) {
     return { left: nothing, right: forward };
   }
-  if (isSame(directions, moveRight)) {
+  if (isSame(movement, moveRight)) {
     return { left: forward, right: nothing };
   }
-  if (isSame(directions, rotateLeft)) {
+  if (isSame(movement, rotateLeft)) {
     return { left: backward, right: forward };
   }
-  if (isSame(directions, rotateRight)) {
+  if (isSame(movement, rotateRight)) {
     return { left: forward, right: backward };
   }
   return { left: nothing, right: nothing };
 }
 
 export function gpiosToActivate(
-  directions: Directions,
+  movement: Movement,
   wheels: RobotWheels
 ): Gpio[] {
-  const actionsOn = getWheelsAction(directions);
+  const actionsOn = getWheelsAction(movement);
   return [...actionsOn.left(wheels.left), ...actionsOn.right(wheels.right)];
 }
