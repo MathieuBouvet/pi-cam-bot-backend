@@ -28,10 +28,14 @@ function deactivate(gpio: Gpio): void {
 
 const nothing: actionOnWheel = (wheel) => [];
 const forward: actionOnWheel = (wheel) => [wheel[0]];
+const backward: actionOnWheel = (wheel) => [wheel[1]];
 
 function getWheelsAction({ up, down, left, right }: Directions): WheelsAction {
   if (up) {
     return { left: forward, right: forward };
+  }
+  if (down) {
+    return { left: backward, right: backward };
   }
   return { left: nothing, right: nothing };
 }
