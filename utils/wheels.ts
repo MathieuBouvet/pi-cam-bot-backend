@@ -18,6 +18,19 @@ type WheelsAction = {
   [key in keyof RobotWheels]: actionOnWheel;
 };
 
+function createDirections(...directions: (keyof Directions)[]): Directions {
+  const dir: Directions = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+  };
+  for (let name of directions) {
+    dir[name] = true;
+  }
+  return dir;
+}
+
 function isSame(d1: Directions, d2: Directions): boolean {
   return (
     d1.up === d2.up &&
