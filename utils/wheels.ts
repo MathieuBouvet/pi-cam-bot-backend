@@ -37,6 +37,9 @@ function getWheelsAction({ up, down, left, right }: Directions): WheelsAction {
   if (down) {
     return { left: backward, right: backward };
   }
+  if (left) {
+    return { left: backward, right: forward };
+  }
   return { left: nothing, right: nothing };
 }
 
