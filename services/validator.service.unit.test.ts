@@ -5,7 +5,7 @@ import { createMovement } from "../utils/wheels";
 describe("camera validator", () => {
   const cameraValidator = validator.camera;
   it.each([[{ started: true }], [{ started: false }]])(
-    "should return the input when passing validation",
+    "%p should pass validation",
     (value) => {
       expect(cameraValidator(value)).toEqual(value);
     }
@@ -25,12 +25,9 @@ describe("camera validator", () => {
     [{ started: () => null }],
     [{ started: [] }],
     [{ started: true, invalid: false }],
-  ])(
-    "should throw an Http400 error when input is not {started: Boolean}",
-    (input) => {
-      expect(() => cameraValidator(input)).toThrow(Http400);
-    }
-  );
+  ])("%p should not pass validation", (input) => {
+    expect(() => cameraValidator(input)).toThrow(Http400);
+  });
 });
 
 describe("movement validator", () => {
