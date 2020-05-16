@@ -60,3 +60,110 @@ it.each([
     expect(gpiosToActivate(directions, testRobotWheels)).toEqual(expected);
   }
 );
+
+it.each([
+  [
+    "UP and DOWN",
+    {
+      up: true,
+      down: true,
+      left: false,
+      right: false,
+    },
+  ],
+  [
+    "LEFT and RIGHT",
+    {
+      up: false,
+      down: false,
+      left: true,
+      right: true,
+    },
+  ],
+  [
+    "DOWN and LEFT",
+    {
+      up: false,
+      down: true,
+      left: true,
+      right: false,
+    },
+  ],
+  [
+    "DOWN and RIGHT",
+    {
+      up: false,
+      down: true,
+      left: false,
+      right: true,
+    },
+  ],
+  [
+    "UP and DOWN and LEFT",
+    {
+      up: true,
+      down: true,
+      left: true,
+      right: false,
+    },
+  ],
+  [
+    "DOWN and LEFT and RIGHT",
+    {
+      up: false,
+      down: true,
+      left: true,
+      right: true,
+    },
+  ],
+  [
+    "UP and LEFT and RIGHT",
+    {
+      up: true,
+      down: false,
+      left: true,
+      right: true,
+    },
+  ],
+  [
+    "UP and DOWN and RIGHT",
+    {
+      up: true,
+      down: true,
+      left: false,
+      right: true,
+    },
+  ],
+  [
+    "UP and DOWN and LEFT",
+    {
+      up: true,
+      down: true,
+      left: true,
+      right: false,
+    },
+  ],
+  [
+    "all at once",
+    {
+      up: true,
+      down: true,
+      left: true,
+      right: true,
+    },
+  ],
+  [
+    "none",
+    {
+      up: false,
+      down: false,
+      left: false,
+      right: false,
+    },
+  ],
+])(
+  "should return empty list for %s",
+  (description: string, directions: Directions) => {
+    expect(gpiosToActivate(directions, testRobotWheels)).toEqual([]);
+  }
+);
