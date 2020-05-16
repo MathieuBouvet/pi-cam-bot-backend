@@ -57,17 +57,17 @@ const nothing: actionOnWheel = (wheel) => [];
 const forward: actionOnWheel = (wheel) => [wheel[0]];
 const backward: actionOnWheel = (wheel) => [wheel[1]];
 
-function getWheelsAction({ up, down, left, right }: Directions): WheelsAction {
-  if (up) {
+function getWheelsAction(directions: Directions): WheelsAction {
+  if (isSame(directions, moveForward)) {
     return { left: forward, right: forward };
   }
-  if (down) {
+  if (isSame(directions, moveBackward)) {
     return { left: backward, right: backward };
   }
-  if (left) {
+  if (isSame(directions, rotateLeft)) {
     return { left: backward, right: forward };
   }
-  if (right) {
+  if (isSame(directions, rotateRight)) {
     return { left: forward, right: backward };
   }
   return { left: nothing, right: nothing };
