@@ -7,15 +7,12 @@ function isCameraStatus(input: any): input is CameraStatus {
 }
 
 function isMovement(input: any): input is Movement {
-  if (input == null) {
-    return false;
-  }
-  const casted = input as Movement;
   return (
-    typeof casted.up === "boolean" &&
-    typeof casted.down === "boolean" &&
-    typeof casted.left === "boolean" &&
-    typeof casted.right === "boolean"
+    input != null &&
+    typeof input.up === "boolean" &&
+    typeof input.down === "boolean" &&
+    typeof input.left === "boolean" &&
+    typeof input.right === "boolean"
   );
 }
 
@@ -32,6 +29,7 @@ function movement(input: any): Movement {
   }
   return input;
 }
+
 export default {
   camera,
   movement,
