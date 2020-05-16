@@ -31,6 +31,11 @@ function createDirections(...directions: (keyof Directions)[]): Directions {
   return dir;
 }
 
+const moveForward = createDirections("up");
+const moveBackward = createDirections("down");
+const rotateLeft = createDirections("left");
+const rotateRight = createDirections("right");
+
 function isSame(d1: Directions, d2: Directions): boolean {
   return (
     d1.up === d2.up &&
