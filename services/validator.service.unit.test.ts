@@ -1,5 +1,6 @@
 import validator from "./validator.service";
 import { Http400 } from "../utils/errors";
+import { createMovement } from "../utils/wheels";
 
 describe("camera validator", () => {
   const cameraValidator = validator.camera;
@@ -30,4 +31,27 @@ describe("camera validator", () => {
       expect(() => cameraValidator(input)).toThrow(Http400);
     }
   );
+});
+
+describe("movement validator", () => {
+  it.each([
+    [createMovement()],
+    [createMovement("up")],
+    [createMovement("down")],
+    [createMovement("left")],
+    [createMovement("right")],
+    [createMovement("up", "down")],
+    [createMovement("up", "left")],
+    [createMovement("up", "right")],
+    [createMovement("down", "left")],
+    [createMovement("down", "right")],
+    [createMovement("left", "right")],
+    [createMovement("up", "down", "left")],
+    [createMovement("up", "down", "right")],
+    [createMovement("up", "left", "right")],
+    [createMovement("down", "left", "right")],
+    [createMovement("up", "down", "left", "right")],
+  ])("%p should pass validation", (input) => {
+    expect(validator.movement(input)).toEqual(input);
+  });
 });
