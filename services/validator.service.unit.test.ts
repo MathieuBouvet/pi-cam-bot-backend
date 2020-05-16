@@ -54,4 +54,16 @@ describe("movement validator", () => {
   ])("%p should pass validation", (input) => {
     expect(validator.movement(input)).toEqual(input);
   });
+
+  it.each([
+    [null],
+    [{}],
+    [{ up: true }],
+    [{ up: "true" }],
+    [{ up: true, down: true, left: true, plop: true }],
+    [{ up: "", down: "", left: "", right: "" }],
+    [{ up: true, down: true, left: true, right: true, plop: true }],
+  ])("%p should not pass validation", (input) => {
+    expect(() => validator.movement(input)).toThrow(Http400);
+  });
 });
