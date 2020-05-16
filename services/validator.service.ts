@@ -2,16 +2,15 @@ import { Http400 } from "../utils/errors";
 import { CameraStatus } from "../utils/streamerProcess";
 import { Movement } from "../utils/wheels";
 
+function isCameraStatus(input: any): input is CameraStatus {
+  return input && input.started != null && typeof input.started == "boolean";
+}
+
 function camera(input: any): CameraStatus {
-  if (
-    input &&
-    input.started != null &&
-    typeof input.started == "boolean" &&
-    Object.keys(input).length === 1
-  ) {
-    return input as CameraStatus;
+  if (!isCameraStatus(input) || Object.keys(input).length !== 1) {
+    throw new Http400("invalid camera input");
   }
-  throw new Http400("invalid camera input");
+  return input;
 }
 
 function isMovement(input: any): input is Movement {
