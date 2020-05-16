@@ -3,7 +3,7 @@ import { CameraStatus } from "../utils/streamerProcess";
 import { Movement } from "../utils/wheels";
 
 function isCameraStatus(input: any): input is CameraStatus {
-  return input && input.started != null && typeof input.started == "boolean";
+  return input != null && typeof input.started === "boolean";
 }
 
 function isMovement(input: any): input is Movement {
