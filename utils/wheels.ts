@@ -18,6 +18,15 @@ type WheelsAction = {
   [key in keyof RobotWheels]: actionOnWheel;
 };
 
+function isSame(d1: Directions, d2: Directions): boolean {
+  return (
+    d1.up === d2.up &&
+    d1.down === d2.down &&
+    d1.left === d2.left &&
+    d1.right === d2.right
+  );
+}
+
 function activate(gpio: Gpio): void {
   gpio.writeSync(1);
 }
