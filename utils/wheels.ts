@@ -18,7 +18,7 @@ type WheelsAction = {
   [key in keyof RobotWheels]: actionOnWheel;
 };
 
-function createMovement(...directions: (keyof Movement)[]): Movement {
+export function createMovement(...directions: (keyof Movement)[]): Movement {
   const movement: Movement = {
     up: false,
     down: false,
