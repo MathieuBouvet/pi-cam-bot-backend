@@ -24,6 +24,16 @@ it.each([
     },
     [testGpios[0], testGpios[2]],
   ],
+  [
+    "move backward",
+    {
+      up: false,
+      down: true,
+      left: false,
+      right: false,
+    },
+    [testGpios[1], testGpios[3]],
+  ],
 ])(
   "should return the list of gpio to activate to %s",
   (description: string, directions: Directions, expected: Gpio[]) => {
