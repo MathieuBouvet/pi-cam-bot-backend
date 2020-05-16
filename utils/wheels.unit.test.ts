@@ -35,6 +35,26 @@ it.each([
     [testGpios[1], testGpios[3]],
   ],
   [
+    "move left",
+    {
+      up: true,
+      down: false,
+      left: true,
+      right: false,
+    },
+    [testGpios[2]],
+  ],
+  [
+    "move right",
+    {
+      up: true,
+      down: false,
+      left: false,
+      right: true,
+    },
+    [testGpios[0]],
+  ],
+  [
     "rotate left",
     {
       up: false,
