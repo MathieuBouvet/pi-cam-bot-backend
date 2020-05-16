@@ -42,7 +42,6 @@ it.each<[string, (keyof Movement)[]]>([
   ["DOWN and LEFT and RIGHT", ["down", "left", "right"]],
   ["UP and LEFT and RIGHT", ["up", "left", "right"]],
   ["UP and DOWN and RIGHT", ["up", "down", "right"]],
-  ["UP and DOWN and LEFT", ["up", "down", "left"]],
   ["all at once", ["up", "down", "left", "right"]],
   ["none", []],
 ])("should return empty list for %s", (description, directions) => {
