@@ -6,13 +6,6 @@ function isCameraStatus(input: any): input is CameraStatus {
   return input && input.started != null && typeof input.started == "boolean";
 }
 
-function camera(input: any): CameraStatus {
-  if (!isCameraStatus(input) || Object.keys(input).length !== 1) {
-    throw new Http400("invalid camera input");
-  }
-  return input;
-}
-
 function isMovement(input: any): input is Movement {
   if (input == null) {
     return false;
@@ -25,6 +18,14 @@ function isMovement(input: any): input is Movement {
     typeof casted.right === "boolean"
   );
 }
+
+function camera(input: any): CameraStatus {
+  if (!isCameraStatus(input) || Object.keys(input).length !== 1) {
+    throw new Http400("invalid camera input");
+  }
+  return input;
+}
+
 function movement(input: any): Movement {
   if (!isMovement(input) || Object.keys(input).length !== 4) {
     throw new Http400("invalid movement input");
