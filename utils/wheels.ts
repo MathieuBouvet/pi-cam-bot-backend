@@ -33,6 +33,8 @@ function createDirections(...directions: (keyof Directions)[]): Directions {
 
 const moveForward = createDirections("up");
 const moveBackward = createDirections("down");
+const moveLeft = createDirections("up", "left");
+const moveRight = createDirections("up", "right");
 const rotateLeft = createDirections("left");
 const rotateRight = createDirections("right");
 
@@ -63,6 +65,12 @@ function getWheelsAction(directions: Directions): WheelsAction {
   }
   if (isSame(directions, moveBackward)) {
     return { left: backward, right: backward };
+  }
+  if (isSame(directions, moveLeft)) {
+    return { left: nothing, right: forward };
+  }
+  if (isSame(directions, moveRight)) {
+    return { left: forward, right: nothing };
   }
   if (isSame(directions, rotateLeft)) {
     return { left: backward, right: forward };
