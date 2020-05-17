@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import camera from "./services/camera.service";
+import movement from "./services/movement.service";
 import validator from "./services/validator.service";
 import { http400Handler } from "./utils/errorHandler";
 
@@ -26,8 +27,10 @@ app.put("/robot/camera", async (req, res, next) => {
   }
 });
 
-app.put("/robot", (req, res) => {
-  res.status(200).json({ ok: true });
+app.put("/robot/movement", (req, res) => {
+  const whantedMovement = validator.movement(req.body);
+  movement.update(whantedMovement);
+  res.status(204).send();
 });
 
 app.use(http400Handler);
