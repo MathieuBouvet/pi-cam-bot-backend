@@ -47,14 +47,6 @@ function isSame(d1: Movement, d2: Movement): boolean {
   );
 }
 
-function activate(gpio: Gpio): void {
-  gpio.writeSync(1);
-}
-
-function deactivate(gpio: Gpio): void {
-  gpio.writeSync(0);
-}
-
 const nothing: actionOnWheel = (wheel) => [];
 const forward: actionOnWheel = (wheel) => [wheel[0]];
 const backward: actionOnWheel = (wheel) => [wheel[1]];
@@ -79,6 +71,14 @@ function getWheelsAction(movement: Movement): WheelsAction {
     return { left: forward, right: backward };
   }
   return { left: nothing, right: nothing };
+}
+
+export function activate(gpio: Gpio): void {
+  gpio.writeSync(1);
+}
+
+export function deactivate(gpio: Gpio): void {
+  gpio.writeSync(0);
 }
 
 export function gpiosToActivate(
