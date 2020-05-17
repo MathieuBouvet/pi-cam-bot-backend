@@ -37,6 +37,8 @@ const moveLeft = createMovement("up", "left");
 const moveRight = createMovement("up", "right");
 const rotateLeft = createMovement("left");
 const rotateRight = createMovement("right");
+const backwardLeft = createMovement("down", "left");
+const backwardRight = createMovement("down", "right");
 
 function isSame(d1: Movement, d2: Movement): boolean {
   return (
@@ -69,6 +71,12 @@ function getWheelsAction(movement: Movement): WheelsAction {
   }
   if (isSame(movement, rotateRight)) {
     return { left: forward, right: backward };
+  }
+  if (isSame(movement, backwardLeft)) {
+    return { left: nothing, right: backward };
+  }
+  if (isSame(movement, backwardRight)) {
+    return { left: backward, right: nothing };
   }
   return { left: nothing, right: nothing };
 }
