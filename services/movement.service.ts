@@ -8,8 +8,8 @@ import {
 } from "../utils/wheels";
 
 const robotWheels: RobotWheels = {
-  left: [new Gpio(11, "out"), new Gpio(13, "out")],
-  right: [new Gpio(23, "out"), new Gpio(24, "out")],
+  left: [new Gpio(23, "out"), new Gpio(24, "out")],
+  right: [new Gpio(27, "out"), new Gpio(17, "out")],
 };
 
 const allGpios = [...robotWheels.left, ...robotWheels.right];
