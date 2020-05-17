@@ -1,11 +1,18 @@
 import supertest from "supertest";
 import app from "./app";
 import waitFor from "./utils/waitFor";
+import { createMovement } from "./utils/wheels";
 
 const request = supertest(app);
 const moveURI = "/robot/movement";
 
 const oneSecond = waitFor(1000);
+
+const stop = createMovement();
+const moveForward = createMovement("up");
+const moveBackward = createMovement("down");
+const rotateLeft = createMovement("left");
+const rotateRight = createMovement("right");
 
 /**
  * the robot should :
@@ -17,42 +24,23 @@ const oneSecond = waitFor(1000);
  */
 
 (async () => {
-  await request.put(moveURI).send({
-    up: true,
-    down: false,
-    left: false,
-    right: false,
-  });
+  await request.put(moveURI).send(moveForward);
+  await oneSecond();
+  await request.put(moveURI).send(stop);
   await oneSecond();
 
-  await request.put(moveURI).send({
-    up: false,
-    down: false,
-    left: true,
-    right: true,
-  });
+  await request.put(moveURI).send(rotateLeft);
+  await oneSecond();
+  await request.put(moveURI).send(stop);
   await oneSecond();
 
-  await request.put(moveURI).send({
-    up: false,
-    down: false,
-    left: false,
-    right: true,
-  });
+  await request.put(moveURI).send(rotateRight);
+  await oneSecond();
+  await request.put(moveURI).send(stop);
   await oneSecond();
 
-  await request.put(moveURI).send({
-    up: false,
-    down: true,
-    left: false,
-    right: false,
-  });
+  await request.put(moveURI).send(moveBackward);
   await oneSecond();
 
-  await request.put(moveURI).send({
-    up: false,
-    down: false,
-    left: false,
-    right: false,
-  });
+  await request.put(moveURI).send(stop);
 })();
