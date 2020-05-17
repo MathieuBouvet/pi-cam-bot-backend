@@ -25,6 +25,8 @@ it.each<[string, (keyof Movement)[], Gpio[]]>([
   ["move right", ["up", "right"], [testGpios[0]]],
   ["rotate left", ["left"], [testGpios[1], testGpios[2]]],
   ["rotate right", ["right"], [testGpios[0], testGpios[3]]],
+  ["go backward left", ["down", "left"], [testGpios[3]]],
+  ["go backward right", ["down", "right"], [testGpios[1]]],
 ])(
   "should return the list of gpio to activate to %s",
   (description, directions, expected: Gpio[]) => {
@@ -36,8 +38,6 @@ it.each<[string, (keyof Movement)[], Gpio[]]>([
 it.each<[string, (keyof Movement)[]]>([
   ["UP and DOWN", ["up", "down"]],
   ["LEFT and RIGHT", ["left", "right"]],
-  ["DOWN and LEFT", ["down", "left"]],
-  ["DOWN and RIGHT", ["down", "right"]],
   ["UP and DOWN and LEFT", ["up", "down", "left"]],
   ["DOWN and LEFT and RIGHT", ["down", "left", "right"]],
   ["UP and LEFT and RIGHT", ["up", "left", "right"]],
