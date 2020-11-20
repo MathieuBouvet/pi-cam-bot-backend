@@ -1,6 +1,6 @@
 # pi-cam-bot
 
-Un petit robot qui filme devant lui, controllé par un raspberry-pi sur le réseau local.
+Un petit robot qui filme devant lui, contrôlé par un raspberry-pi sur le réseau local.
 
 Architecture client/serveur, le raspberry expose une API http, qui permet de controller les déplacements du robot et de lancer ou arrêter le stream de sa camera.
 
